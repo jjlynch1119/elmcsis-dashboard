@@ -23,6 +23,8 @@ To deploy this project run
 Dependencies
 
 - [Docker](https://docs.docker.com/desktop/)
+- [NodeJS](https://nodejs.org/en)
+- [pnpm](https://pnpm.io/installation)
 
 References
 
