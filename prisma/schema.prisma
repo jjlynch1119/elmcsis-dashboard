@@ -6,10 +6,75 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "./generated/prisma"
+  output   = "./generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Course {
+  courseId         Int              @id @default(autoincrement())
+  professorEnumber Int
+  departmentId     Int
+  startDate        DateTime?
+  endDate          DateTime?
+  createdAt        DateTime
+  professor        Professor        @relation(fields: [professorEnumber], references: [enumber])
+  department       Department       @relation(fields: [departmentId], references: [departmentId])
+  studentCourses   StudentCourse[]
+  resourceCourses  ResourceCourse[]
+}
+
+model Student {
+  enumber         Int             @id @default(autoincrement())
+  username        String
+  hashedPassword  String
+  permissionLevel Int
+  email           String
+  startDate       DateTime?
+  graduationDate  DateTime?
+  createdAt       DateTime
+  studentCourses  StudentCourse[]
+}
+
+model Professor {
+  enumber         Int      @id @default(autoincrement())
+  username        String
+  hashedPassword  String
+  permissionLevel Int
+  email           String
+  createdAt       DateTime
+  courses         Course[]
+}
+
+model StudentCourse {
+  enumber  Int
+  courseId Int
+  student  Student @relation(fields: [enumber], references: [enumber])
+  course   Course  @relation(fields: [courseId], references: [courseId])
+
+  @@id([enumber, courseId])
+}
+
+model Resource {
+  resourceId      Int              @id @default(autoincrement())
+  resourceName    String?
+  resourceCourses ResourceCourse[]
+}
+
+model ResourceCourse {
+  resourceId Int
+  courseId   Int
+  resource   Resource @relation(fields: [resourceId], references: [resourceId])
+  course     Course   @relation(fields: [courseId], references: [courseId])
+
+  @@id([resourceId, courseId])
+}
+
+model Department {
+  departmentId   Int      @id @default(autoincrement())
+  departmentName String
+  courses        Course[]
 }
