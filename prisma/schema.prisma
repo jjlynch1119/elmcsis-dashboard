@@ -60,7 +60,7 @@ model StudentCourse {
 
 model Resource {
   resourceId      Int              @id @default(autoincrement())
-  resourceName    String?
+  resourceName    String
   resourceCourses ResourceCourse[]
 }
 
