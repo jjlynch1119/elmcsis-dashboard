@@ -4,13 +4,11 @@ FROM node:20-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-# Install pnpm globally
-RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /src/app
 
-# Install dependencies using pnpm
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+# Install dependencies using npm
+COPY package.json package-lock.json ./
+RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -23,7 +21,7 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN pnpm run build
+RUN npm run build
 
 # Production image, copy all the files and run next
 FROM base AS runner
