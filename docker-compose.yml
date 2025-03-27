@@ -6,6 +6,7 @@ services:
       - 3000:3000
     depends_on:
       - db
+      - migrate # Ensure migrations run before the web service starts
 
   db:
     image: postgres
@@ -16,6 +17,18 @@ services:
       POSTGRES_PASSWORD: admin
     volumes:
       - db_data:/var/lib/postgresql/data
+
+  migrate:
+    profiles: ["dev"]
+    image: node:18 # Use a Node.js image to run Prisma commands
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      DATABASE_URL: "postgresql://postgres:admin@db:5432/elmcsis-dashboard"
+    depends_on:
+      - db
+    entrypoint: ["sh", "-c", "npm install && npx prisma migrate deploy"]
 
   adminer:
     image: adminer
