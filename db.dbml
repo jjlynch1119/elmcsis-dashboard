@@ -1,0 +1,74 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table account {
+  account_id integer [primary key, not null]
+  username varchar [unique, not null]
+  hashed_password char(60) [not null] // bcrypt hash
+  email varchar [unique, not null]
+  role varchar [not null] // 'student' or 'professor'
+  created_at timestamp [not null]
+  last_login timestamp // Nullable: track last login time
+}
+
+Table student {
+  account_id integer [primary key, not null] // FK to account.account_id
+  first_name varchar [not null]
+  last_name varchar [not null]
+  start_date timestamp // Nullable
+  graduation_date timestamp // Nullable
+
+  Ref: account_id > account.account_id
+}
+
+Table professor {
+  account_id integer [primary key, not null] // FK to account.account_id
+  first_name varchar [not null]
+  last_name varchar [not null]
+  office_location varchar // Nullable: professor-specific field
+
+  Ref: account_id > account.account_id
+}
+
+Table course {
+  course_id integer [primary key, not null]
+  course_number varchar [not null]
+  professor_enumber integer [not null] // FK to professor.account_id
+  department_id integer [not null] // FK to department.department_id
+  start_date timestamp
+  end_date timestamp
+  created_at timestamp [not null]
+  status integer [not null] // Course status (e.g., active, archived)
+
+  Ref: professor_enumber > professor.account_id
+  Ref: department_id > department.department_id
+}
+
+Table student_course {
+  enumber integer [primary key, not null] // FK to student.account_id
+  course_id integer [primary key, not null] // FK to course.course_id
+  enrollment_date timestamp [not null] // Added enrollment date
+
+  Ref: enumber > student.account_id
+  Ref: course_id > course.course_id
+}
+
+Table resource {
+  resource_id integer [primary key, not null]
+  resource_name varchar [not null]
+  resource_type varchar [not null] // Added resource type
+}
+
+Table resource_course {
+  resource_id integer [primary key, not null] // FK to resource.resource_id
+  course_id integer [primary key, not null] // FK to course.course_id
+
+  Ref: resource_id > resource.resource_id
+  Ref: course_id > course.course_id
+}
+
+Table department {
+  department_id integer [primary key, not null]
+  department_name varchar [not null]
+  department_abbreviation varchar [not null]
+}
