@@ -2,62 +2,63 @@
 // Docs: https://dbml.dbdiagram.io/docs
 
 Table account {
-  account_id integer [primary key, not null]
-  username varchar [unique, not null]
-  hashed_password char(60) [not null] // bcrypt hash
-  email varchar [unique, not null]
-  role varchar [not null] // 'student' or 'professor'
+  account_id String [primary key, not null]
+  username String [unique, not null]
+  hashed_password String [not null] // Exactly 60 characters for bcrypt
+  email String [unique, not null]
+  role String [not null]
   created_at timestamp [not null]
-  last_login timestamp // Nullable: track last login time
+  last_login timestamp // Nullable
 }
 
 Table student {
-  account_id integer [primary key, not null] // FK to account.account_id
-  first_name varchar [not null]
-  last_name varchar [not null]
+  account_id String [primary key, not null] // FK to account.account_id
+  first_name String [not null]
+  last_name String [not null]
   start_date timestamp // Nullable
   graduation_date timestamp // Nullable
 }
 
 Table professor {
-  account_id integer [primary key, not null] // FK to account.account_id
-  first_name varchar [not null]
-  last_name varchar [not null]
-  office_location varchar // Nullable: professor-specific field
+  account_id String [primary key, not null] // FK to account.account_id
+  first_name String [not null]
+  last_name String [not null]
+  office_location String // Nullable
 }
 
 Table course {
-  course_id integer [primary key, not null]
-  course_number varchar [not null]
-  professor_enumber integer [not null] // FK to professor.account_id
-  department_id integer [not null] // FK to department.department_id
-  start_date timestamp
-  end_date timestamp
+  course_id String [primary key, not null]
+  course_name String [not null]
+  course_number String [not null]
+  professor_enumber String [not null] // FK to professor.account_id
+  department_id String [not null] // FK to department.department_id
+  start_date timestamp // Nullable
+  end_date timestamp // Nullable
   created_at timestamp [not null]
-  status integer [not null] // Course status (e.g., active, archived)
+  status Integer [not null] // Course status (e.g., active, archived)
 }
 
 Table student_course {
-  enumber integer [primary key, not null] // FK to student.account_id
-  course_id integer [primary key, not null] // FK to course.course_id
-  enrollment_date timestamp [not null] // Added enrollment date
+  enumber String [primary key, not null] // FK to student.account_id
+  course_id String [primary key, not null] // FK to course.course_id
+  enrollment_date timestamp [not null]
 }
 
 Table resource {
-  resource_id integer [primary key, not null]
-  resource_name varchar [not null]
-  resource_type varchar [not null] // Added resource type
+  resource_id String [primary key, not null]
+  resource_name String [not null]
+  resource_type String [not null]
 }
 
 Table resource_course {
-  resource_id integer [primary key, not null] // FK to resource.resource_id
-  course_id integer [primary key, not null] // FK to course.course_id
+  resource_id String [primary key, not null] // FK to resource.resource_id
+  course_id String [primary key, not null] // FK to course.course_id
 }
 
 Table department {
-  department_id integer [primary key, not null]
-  department_name varchar [not null]
-  department_abbreviation varchar [not null]
+  department_id String [primary key, not null]
+  department_name String [not null]
+  department_abbreviation String [not null]
 }
 
 Ref: student.account_id > account.account_id
