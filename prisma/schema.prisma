@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,67 +7,90 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Course {
-  courseId         Int              @id @default(autoincrement())
-  professorEnumber Int
-  departmentId     Int
-  startDate        DateTime?
-  endDate          DateTime?
-  createdAt        DateTime
-  professor        Professor        @relation(fields: [professorEnumber], references: [enumber])
-  department       Department       @relation(fields: [departmentId], references: [departmentId])
-  studentCourses   StudentCourse[]
-  resourceCourses  ResourceCourse[]
+model Account {
+  accountId      String   @id @default(uuid())
+  username       String   @unique
+  hashedPassword String   @db.Char(60) // Exactly 60 characters for bcrypt
+  email          String   @unique
+  role           String
+  createdAt      DateTime @default(now())
+  lastLogin      DateTime?
+
+  student        Student?
+  professor      Professor?
 }
 
 model Student {
-  enumber         Int             @id @default(autoincrement())
-  username        String
-  hashedPassword  String
-  permissionLevel Int
-  email           String
+  accountId       String   @id
+  firstName       String
+  lastName        String
   startDate       DateTime?
   graduationDate  DateTime?
-  createdAt       DateTime
+
+  account         Account  @relation(fields: [accountId], references: [accountId])
   studentCourses  StudentCourse[]
 }
 
 model Professor {
-  enumber         Int      @id @default(autoincrement())
-  username        String
-  hashedPassword  String
-  permissionLevel Int
-  email           String
-  createdAt       DateTime
+  accountId       String   @id
+  firstName       String
+  lastName        String
+  officeLocation  String?
+
+  account         Account  @relation(fields: [accountId], references: [accountId])
   courses         Course[]
 }
 
+model Course {
+  courseId        String   @id @default(uuid())
+  courseName      String   // Added courseName
+  courseNumber    String
+  professorEnumber String
+  departmentId    String
+  startDate       DateTime?
+  endDate         DateTime?
+  createdAt       DateTime @default(now())
+  status          Int
+
+  professor       Professor @relation(fields: [professorEnumber], references: [accountId])
+  department      Department @relation(fields: [departmentId], references: [departmentId])
+  studentCourses  StudentCourse[]
+  resourceCourses ResourceCourse[]
+}
+
 model StudentCourse {
-  enumber  Int
-  courseId Int
-  student  Student @relation(fields: [enumber], references: [enumber])
-  course   Course  @relation(fields: [courseId], references: [courseId])
+  enumber         String
+  courseId        String
+  enrollmentDate  DateTime
+
+  student         Student @relation(fields: [enumber], references: [accountId])
+  course          Course  @relation(fields: [courseId], references: [courseId])
 
   @@id([enumber, courseId])
 }
 
 model Resource {
-  resourceId      Int              @id @default(autoincrement())
+  resourceId      String   @id @default(uuid())
   resourceName    String
+  resourceType    String
+
   resourceCourses ResourceCourse[]
 }
 
 model ResourceCourse {
-  resourceId Int
-  courseId   Int
-  resource   Resource @relation(fields: [resourceId], references: [resourceId])
-  course     Course   @relation(fields: [courseId], references: [courseId])
+  resourceId      String
+  courseId        String
+
+  resource        Resource @relation(fields: [resourceId], references: [resourceId])
+  course          Course   @relation(fields: [courseId], references: [courseId])
 
   @@id([resourceId, courseId])
 }
 
 model Department {
-  departmentId   Int      @id @default(autoincrement())
-  departmentName String
-  courses        Course[]
+  departmentId          String   @id @default(uuid())
+  departmentName        String
+  departmentAbbreviation String
+
+  courses               Course[]
 }
