@@ -1,5 +1,6 @@
 services:
-  web:
+  web-dev:
+    profiles: ["dev"]
     image: elmcsis-dashboard
     restart: always
     ports:
