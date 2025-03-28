@@ -8,7 +8,7 @@ export default function Header() {
       {/* University Logo Placeholder */}
       <div className="flex items-center">
         <Image
-          src="/public/uni_logo.png" // Replace with your logo path
+          src="/uni_logo.png" // Replace with your logo path
           alt="University Logo"
           width={120}
           height={40}
