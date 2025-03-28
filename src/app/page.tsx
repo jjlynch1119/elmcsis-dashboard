@@ -1,12 +1,8 @@
 import React from "react";
-import Header from "@/components/Header";
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      {/* Header */}
-      <Header />
-
       {/* Main Content */}
       <main className="flex flex-1 flex-col items-center justify-center text-center p-8">
         {/* Info Section */}
