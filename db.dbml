@@ -17,8 +17,6 @@ Table student {
   last_name varchar [not null]
   start_date timestamp // Nullable
   graduation_date timestamp // Nullable
-
-  Ref: account_id > account.account_id
 }
 
 Table professor {
@@ -26,8 +24,6 @@ Table professor {
   first_name varchar [not null]
   last_name varchar [not null]
   office_location varchar // Nullable: professor-specific field
-
-  Ref: account_id > account.account_id
 }
 
 Table course {
@@ -39,18 +35,12 @@ Table course {
   end_date timestamp
   created_at timestamp [not null]
   status integer [not null] // Course status (e.g., active, archived)
-
-  Ref: professor_enumber > professor.account_id
-  Ref: department_id > department.department_id
 }
 
 Table student_course {
   enumber integer [primary key, not null] // FK to student.account_id
   course_id integer [primary key, not null] // FK to course.course_id
   enrollment_date timestamp [not null] // Added enrollment date
-
-  Ref: enumber > student.account_id
-  Ref: course_id > course.course_id
 }
 
 Table resource {
@@ -62,9 +52,6 @@ Table resource {
 Table resource_course {
   resource_id integer [primary key, not null] // FK to resource.resource_id
   course_id integer [primary key, not null] // FK to course.course_id
-
-  Ref: resource_id > resource.resource_id
-  Ref: course_id > course.course_id
 }
 
 Table department {
@@ -72,3 +59,12 @@ Table department {
   department_name varchar [not null]
   department_abbreviation varchar [not null]
 }
+
+Ref: student.account_id > account.account_id
+Ref: professor.account_id > account.account_id
+Ref: course.professor_enumber > professor.account_id
+Ref: course.department_id > department.department_id
+Ref: student_course.enumber > student.account_id
+Ref: student_course.course_id > course.course_id
+Ref: resource_course.resource_id > resource.resource_id
+Ref: resource_course.course_id > course.course_id
