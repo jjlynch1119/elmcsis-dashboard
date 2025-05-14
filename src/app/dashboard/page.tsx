@@ -1,7 +1,24 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import { Course, columns } from "./columns"
+import { DataTable } from "./data-table"
 
-export default function DashboardPage() {
+async function getData(): Promise<Course[]> {
+  // Fetch data from your API here.
+  return [
+    {
+      id: "CS440",
+      courseName: "CS440",
+      professor: "Jensen",
+      resources: ["Microsoft SQL Server"],
+    },
+    // ...
+  ]
+}
+
+export default async function DashboardPage() {
+const data = await getData()
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       {/* Sidebar */}
@@ -32,11 +49,9 @@ export default function DashboardPage() {
         {/* Placeholder Content */}
         <Card>
           <CardContent className="p-6 text-center text-gray-500">
-            <div className="text-lg font-semibold mb-2">Profile</div>
-            <p>
-              Chart or table will go here. You can integrate Chart.js, D3,
-              ApexCharts, or any content you want.
-            </p>
+            <div className="container mx-auto py-10">
+              <DataTable columns={columns} data={data} />
+            </div>
           </CardContent>
         </Card>
       </main>
